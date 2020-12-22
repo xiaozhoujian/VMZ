@@ -5,6 +5,7 @@ import torch
 
 from .kinetics import Kinetics
 from .ucf101 import UCF
+from .mice import Mice
 
 from vmz.common import utils
 
@@ -32,6 +33,7 @@ def get_dataset(args, transform, split="train"):
 
     if args.dataset == "kinetics400":
         _dataset = Kinetics(
+            # root is the args.traindir, meta_data is torch.load args.train_file
             root, args.num_frames, transform=transform, _precomputed_metadata=metadata
         )
     elif args.dataset == "ucf101":
@@ -44,9 +46,15 @@ def get_dataset(args, transform, split="train"):
             fold=args.fold,
             _precomputed_metadata=metadata,
         )
+    elif args.dataset == 'mice':
+        _dataset = Mice(
+            root, args.num_frames, transform=transform, _precomputed_metadata=metadata,
+            num_workers=args.workers
+        )
 
     _dataset.video_clips.compute_clips(args.num_frames, 1)
     if args.train_file is None or not os.path.isfile(args.train_file):
+        print("Saving pth")
         utils.save_on_master(
             _dataset.metadata,
             "{}_{}_{}fms.pth".format(args.dataset, split, args.num_frames),

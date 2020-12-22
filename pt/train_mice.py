@@ -119,9 +119,7 @@ def train_main(args):
 
     # Data loading code
     print("Loading data")
-
     print("\t Loading datasets")
-    st = time.time()
 
     if not args.eval_only:
         print("\t Loading train data")
@@ -137,7 +135,7 @@ def train_main(args):
                 T.RandomHorizontalFlipVideo(),
                 # in our case, mean = [114.7748, 107.7354, 99.4750] / 255.0, std = [1, 1, 1]
                 T.NormalizeVideo(
-                    mean=(0.43216, 0.394666, 0.37645), std=(0.22803, 0.22145, 0.216989)
+                    mean=(114.7748, 107.7354, 99.4750), std=(1, 1, 1)
                 ),
                 # Perform a random crop by this crop_size is 112 by default
                 T.RandomCropVideo((args.crop_size, args.crop_size)),
@@ -161,7 +159,7 @@ def train_main(args):
             T.ToTensorVideo(),
             T.Resize((args.scale_h, args.scale_w)),
             T.NormalizeVideo(
-                mean=(0.43216, 0.394666, 0.37645), std=(0.22803, 0.22145, 0.216989)
+                mean=(114.7748, 107.7354, 99.4750), std=(1, 1, 1)
             ),
             T.CenterCropVideo((args.crop_size, args.crop_size)),
         ]
